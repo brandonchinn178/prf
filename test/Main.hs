@@ -5,7 +5,8 @@ import Numeric.Natural (Natural)
 import PRF
 import Test.Syd
 import Test.Syd.Hedgehog
-import Prelude hiding (and, not, or, pred)
+import Prelude hiding (and, mod, not, or, pred)
+import Prelude qualified
 
 main :: IO ()
 main = sydTest $ do
@@ -221,6 +222,26 @@ main = sydTest $ do
         describe "Pow" $ do
           specify "Pow(2, 3) = 8" $
             runFunc pow [fromNat 2, fromNat 3] `shouldBe` fromNat 8
+
+        describe "Mod" $ do
+          specify "Mod(0, x) = 0" $
+            property $ do
+              x <- forAll $ peano (Range.linear 1 100)
+              runFunc mod [fromNat 0, x] === fromNat 0
+
+          specify "Mod(1, 1) = 0" $
+            runFunc mod [fromNat 1, fromNat 1] `shouldBe` fromNat 0
+
+          specify "Mod(1, x) = 1" $
+            property $ do
+              x <- forAll $ peano (Range.linear 2 100)
+              runFunc mod [fromNat 1, x] === fromNat 1
+
+          specify "Mod(x, y) = x `mod` y" $
+            property $ do
+              x <- forAll $ Gen.integral (Range.linear 0 50)
+              y <- forAll $ Gen.integral (Range.linear 1 100)
+              runFunc mod [fromNat x, fromNat y] === fromNat (x `Prelude.mod` y)
 
 {----- Helpers -----}
 
