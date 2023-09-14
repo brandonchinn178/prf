@@ -273,6 +273,28 @@ main = sydTest $ do
           specify "Sqrt(110) = 10" $
             runFunc sqrt [fromNat 110] `shouldBe` fromNat 10
 
+        describe "IsPrime" $ do
+          specify "IsPrime(0) = false" $
+            runFunc isPrime [fromNat 0] `shouldBe` false
+
+          specify "IsPrime(1) = false" $
+            runFunc isPrime [fromNat 1] `shouldBe` false
+
+          specify "IsPrime(2) = true" $
+            runFunc isPrime [fromNat 2] `shouldBe` true
+
+          specify "IsPrime(5) = true" $
+            runFunc isPrime [fromNat 5] `shouldBe` true
+
+          specify "IsPrime(6) = false" $
+            runFunc isPrime [fromNat 6] `shouldBe` false
+
+          specify "IsPrime(100) = false" $
+            runFunc isPrime [fromNat 100] `shouldBe` false
+
+          specify "IsPrime(101) = true" $
+            runFunc isPrime [fromNat 101] `shouldBe` true
+
 {----- Helpers -----}
 
 peano :: Range Natural -> Gen PN

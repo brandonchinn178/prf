@@ -27,6 +27,7 @@ module PRF (
   mod,
   div,
   sqrt,
+  isPrime,
 ) where
 
 import PRF.Axioms as X
@@ -136,6 +137,40 @@ sqrt = rho start step • [s • [p 1 1], p 1 1]
           x = p 3 2
           n = p 3 3
        in if_ap (leq • [mul • [count, count], n]) count x
+
+-- https://en.wikipedia.org/wiki/Primality_test#Python
+isPrime :: Func
+isPrime =
+  let n = p 1 1
+      -- (sqrt(n) + 1 - 5) / 6
+      limit = div • [sub • [sqrt • [n], c 1 4], c 1 6]
+   in id
+        -- if (n <= 3) then return (n > 1)
+        . if_ap (leq • [n, c 1 3]) (gt • [n, c 1 1])
+        -- if ((divisible n 2) or (divisible n 3)) then return false
+        . if_ap (or • [divisible • [n, c 1 2], divisible • [n, c 1 3]]) (c 1 0)
+        -- otherwise, loop: 0 -> 5, 1 -> 11, ... limit -> sqrt(n) + 1
+        $ (rho start step • [limit, n])
+  where
+    divisible = eq • [mod, c 2 0]
+
+    -- \_ -> true
+    start = c 1 1
+
+    -- \count x n ->
+    --    let i = 6 * count + 5
+    --    if ((divisible n i) or (divisible n (i+2)))
+    --      then false
+    --      else x
+    step =
+      let count = p 3 1
+          x = p 3 2
+          n = p 3 3
+          i = add • [mul • [c 3 6, count], c 3 5]
+       in if_ap
+            (or • [divisible • [n, i], divisible • [n, add • [i, c 3 2]]])
+            (c 3 0)
+            x
 
 {----- Helpers -----}
 
