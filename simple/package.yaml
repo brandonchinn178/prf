@@ -1,4 +1,4 @@
-name: prf
+name: prf-simple
 version: 0
 
 language: GHC2021
@@ -9,13 +9,13 @@ library:
     - base
 
 tests:
-  prf-test:
+  prf-simple-test:
     source-dirs: test
     main: Main.hs
     dependencies:
       - base
       - hedgehog
-      - prf
+      - prf-simple
       - sydtest
       - sydtest-hedgehog
     ghc-options: -threaded -rtsopts -with-rtsopts=-N
