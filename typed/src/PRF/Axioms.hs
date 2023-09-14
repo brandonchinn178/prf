@@ -25,16 +25,16 @@ module PRF.Axioms (
   c_1_1,
   c_2_0,
   c_2_1,
-  -- p_1_1,
-  -- p_2_1,
-  -- p_2_2,
-  -- p_3_1,
-  -- p_3_2,
-  -- p_3_3,
-  -- p_4_1,
-  -- p_4_2,
-  -- p_4_3,
-  -- p_4_4,
+  p_1_1,
+  p_2_1,
+  p_2_2,
+  p_3_1,
+  p_3_2,
+  p_3_3,
+  p_4_1,
+  p_4_2,
+  p_4_3,
+  p_4_4,
 ) where
 
 import Data.Kind (Constraint)
@@ -52,21 +52,24 @@ data Vec (n :: Nat) a where
   Nil :: Vec 0 a
   (:&) :: a -> Vec n a -> Vec (n + 1) a
 
--- type family IsLTImpl i n where
---   _ `IsLTImpl` 0 = False
---   0 `IsLTImpl` _ = True
---   i `IsLTImpl` n = (i <? n) && ((i - 1) `IsLTImpl` (n - 1))
+infixr 6 :&
 
--- type i `IsLT` n = (IsLTImpl i n ~ True)
+type family IsLTImpl i n where
+  _ `IsLTImpl` 0 = False
+  0 `IsLTImpl` _ = True
+  i `IsLTImpl` n = (i <? n) && ((i - 1) `IsLTImpl` (n - 1))
 
--- type family IsLTEImpl i n where
---   0 `IsLTEImpl` 0 = True
---   i `IsLTEImpl` n = (i <=? n) && ((i - 1) `IsLTEImpl` (n - 1)) && (0 <? n)
--- type i `IsLTE` n = (IsLTEImpl i n ~ True)
+type i `IsLT` n = (IsLTImpl i n ~ True)
 
--- ix :: (1 `IsLTE` n, i `IsLT` n) => PN i -> Vec n a -> a
--- ix Z (a :& _) = a
--- ix (S i) (_ :& as@(_ :& _)) = ix i as
+type family IsLTEImpl i n where
+  0 `IsLTEImpl` 0 = True
+  i `IsLTEImpl` n = (i <=? n) && ((i - 1) `IsLTEImpl` (n - 1))
+
+type i `IsLTE` n = (IsLTEImpl i n ~ True)
+
+ix :: (1 `IsLTE` n, i `IsLT` n) => PN i -> Vec n a -> a
+ix Z (a :& _) = a
+ix (S i) (_ :& as) = ix i as
 
 {----- Func -----}
 
@@ -89,8 +92,8 @@ c k n = Func k $ \_ -> SomePN n
 s :: Func 1
 s = Func (S Z) $ \(SomePN n :& Nil) -> SomePN (S n)
 
--- p :: (1 <= i, i <= k) => PN k -> PN i -> Func k
--- p k i = Func k $ ix (i - 1)
+p :: (1 <= i, 1 <= k, i <= k, i - 1 < k) => PN k -> PN i -> Func k
+p k (S n) = Func k $ ix n
 
 -- (•) :: Func -> [Func] -> Func
 -- h • gs
@@ -132,35 +135,36 @@ c_2_0 = c $(nat 2) $(nat 0)
 c_2_1 :: Func 2
 c_2_1 = c $(nat 2) $(nat 1)
 
--- p_1_1 :: Func 1
--- p_1_1 = p $(nat 1) $(nat 1)
+p_1_1 :: Func 1
+p_1_1 = p $(nat 1) $(nat 1)
 
--- p_2_1 :: Func 2
--- p_2_1 = p $(nat 2) $(nat 1)
+p_2_1 :: Func 2
+p_2_1 = p $(nat 2) $(nat 1)
 
--- p_2_2 :: Func 2
--- p_2_2 = p $(nat 2) $(nat 2)
+p_2_2 :: Func 2
+p_2_2 = p $(nat 2) $(nat 2)
 
--- p_3_1 :: Func 3
--- p_3_1 = p $(nat 3) $(nat 1)
+p_3_1 :: Func 3
+p_3_1 = p $(nat 3) $(nat 1)
 
--- p_3_2 :: Func 3
--- p_3_2 = p $(nat 3) $(nat 2)
+p_3_2 :: Func 3
+p_3_2 = p $(nat 3) $(nat 2)
 
--- p_3_3 :: Func 3
--- p_3_3 = p $(nat 3) $(nat 3)
+p_3_3 :: Func 3
+p_3_3 = p $(nat 3) $(nat 3)
 
--- p_4_1 :: Func 4
--- p_4_1 = p $(nat 4) $(nat 1)
+p_4_1 :: Func 4
+p_4_1 = p $(nat 4) $(nat 1)
 
--- p_4_2 :: Func 4
--- p_4_2 = p $(nat 4) $(nat 2)
+p_4_2 :: Func 4
+p_4_2 = p $(nat 4) $(nat 2)
 
--- p_4_3 :: Func 4
--- p_4_3 = p $(nat 4) $(nat 3)
+p_4_3 :: Func 4
+p_4_3 = p $(nat 4) $(nat 3)
 
--- p_4_4 :: Func 4
--- p_4_4 = p $(nat 4) $(nat 4)
+p_4_4 :: Func 4
+p_4_4 = p $(nat 4) $(nat 4)
+
 
 -- {----- Utilities -----}
 
