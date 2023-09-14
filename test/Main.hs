@@ -217,6 +217,11 @@ main = sydTest $ do
           specify "Gt(1, 5) = false" $
             runFunc gt [fromNat 1, fromNat 5] `shouldBe` false
 
+      describe "Other examples" $ do
+        describe "Pow" $ do
+          specify "Pow(2, 3) = 8" $
+            runFunc pow [fromNat 2, fromNat 3] `shouldBe` fromNat 8
+
 {----- Helpers -----}
 
 peano :: Range Natural -> Gen PN

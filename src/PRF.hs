@@ -21,6 +21,9 @@ module PRF (
   eq,
   lt,
   gt,
+
+  -- ** Other examples
+  pow,
 ) where
 
 import PRF.Axioms as X
@@ -78,3 +81,6 @@ lt = not • [geq]
 
 gt :: Func
 gt = not • [leq]
+
+pow :: Func
+pow = rho (c 1 1) (mul • [p 3 2, p 3 3]) • [p 2 2, p 2 1]
