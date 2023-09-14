@@ -1,3 +1,5 @@
+{-# LANGUAGE DataKinds #-}
+
 module PRF (
   module X,
 
@@ -29,58 +31,58 @@ module PRF (
 import PRF.Axioms as X
 import Prelude hiding (and, not, or, pred)
 
-add :: Func
-add = rho (p 1 1) (s • [p 3 2])
+add :: Func 2
+add = rho (p_1_1) (s • [p_3_2])
 
-double :: Func
-double = add • [p 1 1, p 1 1]
+double :: Func 2
+double = add • [p_1_1, p_1_1]
 
-mul :: Func
-mul = rho (c 1 0) (add • [p 3 2, p 3 3])
+mul :: Func 2
+mul = rho (c_1_0) (add • [p_3_2, p_3_3])
 
-pred :: Func
-pred = rho (c 0 0) (p 2 1)
+pred :: Func 1
+pred = rho (c_0_0) (p_2_1)
 
-sub :: Func
-sub = rsub • [p 2 2, p 2 1]
+sub :: Func 2
+sub = rsub • [p_2_2, p_2_1]
   where
-    rsub = rho (p 1 1) (pred • [p 3 2])
+    rsub = rho (p_1_1) (pred • [p_3_2])
 
-true :: PN
+true :: PN 1
 true = S Z
 
-false :: PN
+false :: PN 0
 false = Z
 
-isZero :: Func
-isZero = rho (c 0 1) (c 2 0)
+isZero :: Func 1
+isZero = rho (c_0_1) (c_2_0)
 
-leq :: Func
+leq :: Func 2
 leq = isZero • [sub]
 
-geq :: Func
-geq = leq • [p 2 2, p 2 1]
+geq :: Func 2
+geq = leq • [p_2_2, p_2_1]
 
-if_ :: Func
-if_ = rho (p 2 2) (p 4 3)
+if_ :: Func 3
+if_ = rho (p_2_2) (p_4_3)
 
-and :: Func
-and = if_ • [p 2 1, p 2 2, c 2 0]
+and :: Func 2
+and = if_ • [p_2_1, p_2_2, c_2_0]
 
-or :: Func
-or = if_ • [p 2 1, c 2 1, p 2 2]
+or :: Func 2
+or = if_ • [p_2_1, c_2_1, p_2_2]
 
-not :: Func
-not = if_ • [p 1 1, c 1 0, c 1 1]
+not :: Func 1
+not = if_ • [p_1_1, c_1_0, c_1_1]
 
-eq :: Func
+eq :: Func 2
 eq = and • [leq, geq]
 
-lt :: Func
+lt :: Func 2
 lt = not • [geq]
 
-gt :: Func
+gt :: Func 2
 gt = not • [leq]
 
-pow :: Func
-pow = rho (c 1 1) (mul • [p 3 2, p 3 3]) • [p 2 2, p 2 1]
+pow :: Func 2
+pow = rho (c_1_1) (mul • [p_3_2, p_3_3]) • [p_2_2, p_2_1]
