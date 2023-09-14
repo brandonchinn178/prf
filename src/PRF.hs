@@ -84,8 +84,15 @@ lt = not • [geq]
 gt :: Func
 gt = not • [leq]
 
+-- Pow(b, e) = Start at 1, then for e times, multiply b
 pow :: Func
-pow = rho (c 1 1) (mul • [p 3 2, p 3 3]) • [p 2 2, p 2 1]
+pow = rho start step • [p 2 2, p 2 1]
+  where
+    -- \b -> 1
+    start = c 1 1
+
+    -- \_ x b -> b * x
+    step = mul • [p 3 2, p 3 3]
 
 -- Mod(n, d) = Start at n, then for n times, return the result if < d else subtract d.
 mod :: Func
