@@ -25,10 +25,11 @@ module PRF (
   -- ** Other examples
   pow,
   mod,
+  div,
 ) where
 
 import PRF.Axioms as X
-import Prelude hiding (and, mod, not, or, pred)
+import Prelude hiding (and, div, mod, not, or, pred)
 
 add :: Func
 add = rho (p 1 1) (s • [p 3 2])
@@ -98,6 +99,21 @@ mod = rho start step • [p 2 1, p 2 1, p 2 2]
       let x = p 4 2
           d = p 4 4
        in if_ap (lt • [x, d]) x (sub • [x, d])
+
+-- Div(n, d) = Start at 0, then for (n + 1) times, return the count while d * count <= n
+div :: Func
+div = rho start step • [s • [p 2 1], p 2 1, p 2 2]
+  where
+    -- \n d -> 0
+    start = p 2 1
+
+    -- \count x n d -> if d * count <= n then count else x
+    step =
+      let count = p 4 1
+          x = p 4 2
+          n = p 4 3
+          d = p 4 4
+       in if_ap (leq • [mul • [d, count], n]) count x
 
 {----- Helpers -----}
 

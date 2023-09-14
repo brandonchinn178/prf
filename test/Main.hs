@@ -5,7 +5,7 @@ import Numeric.Natural (Natural)
 import PRF
 import Test.Syd
 import Test.Syd.Hedgehog
-import Prelude hiding (and, mod, not, or, pred)
+import Prelude hiding (and, div, mod, not, or, pred)
 import Prelude qualified
 
 main :: IO ()
@@ -242,6 +242,23 @@ main = sydTest $ do
               x <- forAll $ Gen.integral (Range.linear 0 50)
               y <- forAll $ Gen.integral (Range.linear 1 100)
               runFunc mod [fromNat x, fromNat y] === fromNat (x `Prelude.mod` y)
+
+        describe "Div" $ do
+          specify "Div(0, x) = 0" $
+            property $ do
+              x <- forAll $ peano (Range.linear 1 100)
+              runFunc div [fromNat 0, x] === fromNat 0
+
+          specify "Div(x, 1) = x" $
+            property $ do
+              x <- forAll $ peano (Range.linear 0 100)
+              runFunc div [x, fromNat 1] === x
+
+          specify "Div(x, y) = x `div` y" $
+            property $ do
+              x <- forAll $ Gen.integral (Range.linear 0 50)
+              y <- forAll $ Gen.integral (Range.linear 1 100)
+              runFunc div [fromNat x, fromNat y] === fromNat (x `Prelude.div` y)
 
 {----- Helpers -----}
 
