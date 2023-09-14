@@ -5,7 +5,7 @@ import Numeric.Natural (Natural)
 import PRF
 import Test.Syd
 import Test.Syd.Hedgehog
-import Prelude hiding (and, div, mod, not, or, pred)
+import Prelude hiding (and, div, mod, not, or, pred, sqrt)
 import Prelude qualified
 
 main :: IO ()
@@ -259,6 +259,19 @@ main = sydTest $ do
               x <- forAll $ Gen.integral (Range.linear 0 50)
               y <- forAll $ Gen.integral (Range.linear 1 100)
               runFunc div [fromNat x, fromNat y] === fromNat (x `Prelude.div` y)
+
+        describe "Sqrt" $ do
+          specify "Sqrt(0) = 0" $
+            runFunc sqrt [fromNat 0] `shouldBe` fromNat 0
+
+          specify "Sqrt(1) = 1" $
+            runFunc sqrt [fromNat 1] `shouldBe` fromNat 1
+
+          specify "Sqrt(25) = 5" $
+            runFunc sqrt [fromNat 25] `shouldBe` fromNat 5
+
+          specify "Sqrt(110) = 10" $
+            runFunc sqrt [fromNat 110] `shouldBe` fromNat 10
 
 {----- Helpers -----}
 

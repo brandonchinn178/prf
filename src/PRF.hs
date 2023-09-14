@@ -26,10 +26,11 @@ module PRF (
   pow,
   mod,
   div,
+  sqrt,
 ) where
 
 import PRF.Axioms as X
-import Prelude hiding (and, div, mod, not, or, pred)
+import Prelude hiding (and, div, mod, not, or, pred, sqrt)
 
 add :: Func
 add = rho (p 1 1) (s • [p 3 2])
@@ -121,6 +122,20 @@ div = rho start step • [s • [p 2 1], p 2 1, p 2 2]
           n = p 4 3
           d = p 4 4
        in if_ap (leq • [mul • [d, count], n]) count x
+
+-- Sqrt(n) = Start at 0, then for (n + 1) times, return the count while count * count <= n
+sqrt :: Func
+sqrt = rho start step • [s • [p 1 1], p 1 1]
+  where
+    -- \n -> 0
+    start = c 1 0
+
+    -- \count x n -> if count * count <= n then count else x
+    step =
+      let count = p 3 1
+          x = p 3 2
+          n = p 3 3
+       in if_ap (leq • [mul • [count, count], n]) count x
 
 {----- Helpers -----}
 
